@@ -1,0 +1,32 @@
+version: '3.6'
+
+services:
+  user-db:
+    container_name: user-db
+    build: ./user_db
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+    healthcheck:
+      test: exit 0
+
+
+  user-api:
+    container_name: user-api
+    build: ./user_api
+    ports:
+      - '21000:11000'
+    environment:
+      - DATABASE_URL=
+      - DATABASE_TEST_URL=
+      - NODE_ENV=${NODE_ENV}:/usr/bin/node
+      - TOKEN_SECRET=asdtoken
+    depends_on:
+      user-db:
+        condition: service_healthy
+    links:
+      - user-db
+
+
